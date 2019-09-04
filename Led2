@@ -1,0 +1,32 @@
+function Led()
+    %Light LED1
+
+    % Defulat setting
+    DEFAULT_PORTNUM		=5; % COM5
+    DEFAULT_BAUDNUM		=1; % 1Mbps
+
+    loadlibrary('dynamixel','dynamixel.h');
+    libfunctions('dynamixel');
+    
+    res = calllib('dynamixel','dxl_initialize',DEFAULT_PORTNUM,DEFAULT_BAUDNUM);
+    
+
+    if res == 1 
+% successfull connection
+    for ID=1:4 
+        calllib('dynamixel','dxl_write_byte',ID,25,1); 
+% write 1 to the LED memory to turn it on
+         pause(1); 
+         calllib('dynamixel','dxl_write_byte',ID,25,0); 
+% uncomment the 
+%following command to know the status of LEDs 
+%         LEDs(ID) = calllib('dynamixel','dxl_read_byte',ID,25)
+
+    end
+    else
+        disp('Failed to open USB2Dynamixel!'); 
+% display this message when the connection fails
+    end
+    calllib('dynamixel','dxl_terminate');
+    unloadlibrary('dynamixel');
+end
