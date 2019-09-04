@@ -1,0 +1,40 @@
+function Led()
+    %Light LED1
+    POS = [0,0,0,0];
+%     REF_POS =[2048,1410,2902,2685];     %Midpoints of extremes
+ %   REF_POS= [2008,         921,        3203    ,    2280];    % practically useful
+    DEG_ANGLE = [0,0,0,0];
+    RAD_ANGLE = [0,0,0,0];
+    % Defulat setting
+    DEFAULT_PORTNUM		=5; % COM3
+    DEFAULT_BAUDNUM		=1; % 1Mbps
+
+    loadlibrary('dynamixel','dynamixel.h');
+%     libfunctions('dynamixel');
+    
+    res = calllib('dynamixel','dxl_initialize',DEFAULT_PORTNUM,DEFAULT_BAUDNUM);
+    
+
+    if res == 1 
+% successfull connection
+    for ID=1:4 
+        POS(ID) = calllib('dynamixel','dxl_read_word',ID,36); 
+        % ID 1   836 - 3236
+        % ID 2   911 - 1909
+        % ID 3  1236 - 3332
+        % ID 4   943 - 3484
+        
+        
+    end
+     POS = mod(POS-REF_POS,4096)
+%     POS
+    DEG_ANGLE = .088*POS
+    RAD_ANGLE = (2*pi)*DEG_ANGLE/360
+    else
+        disp('Failed to open USB2Dynamixel!'); 
+% display this message when the 
+        connection fails
+    end
+    calllib('dynamixel','dxl_terminate');
+    unloadlibrary('dynamixel');
+end
