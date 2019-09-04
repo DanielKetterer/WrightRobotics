@@ -1,0 +1,59 @@
+%-----------------------------------------------
+% This is the initialization 
+section of the flow
+%
+-----------------------------------------------
+DEFAULT_PORTNUM    =3; 
+% Set this to your machine (see comm port setup  
+DEFAULT_BAUDNUM    =1; 
+% 1Mbps 
+–
+do
+esn’t change
+% setup the dynamixel API
+loadlibrary(
+'dynamixel'
+,
+'dynamixel.h'
+);
+res = calllib(
+'dynamixel'
+,
+'dxl_initialize'
+,DEFAULT_PORTNUM,DEFAULT_BAUDNUM);
+% It is best practice to always check the result of functions that can fail
+if
+res == 1 
+% 
+successfull connection
+%
+---------------------------------------------
+% This is the interactions section of the flow
+%
+---------------------------------------------
+else
+% display this message when the connection fails
+disp(
+'Failed to open 
+serial port.
+'
+);    
+end
+%
+----------------------------------------
+% This is the cleanup section of the flow
+%
+-----------------------------------------
+% Once again, only call these functions if the API result is succe
+ss
+if
+res == 1
+calllib(
+'dynamixel'
+,
+'dxl_terminate'
+);
+unloadlibrary(
+'dynamixel'
+);
+end
