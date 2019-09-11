@@ -1,0 +1,6 @@
+function [POS] = RawPosition()
+    for ID=1:4 
+        POS(ID) = calllib('dynamixel','dxl_read_word',ID,36);    
+    end
+    POS;
+end
