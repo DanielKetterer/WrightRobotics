@@ -1,0 +1,69 @@
+function Lab1()
+
+% This is the code for Andrew Lemmon and Daniel Ketterer
+
+    % Default setting
+    DEFAULT_PORTNUM		=5; % COM3
+    DEFAULT_BAUDNUM		=1; % 1Mbps
+
+    loadlibrary('dynamixel','dynamixel.h');
+%     libfunctions('dynamixel');
+    
+    res = calllib('dynamixel','dxl_initialize',DEFAULT_PORTNUM,DEFAULT_BAUDNUM);
+    
+
+    if res == 1 
+% successfull connection
+    % At this point we were able to put in 90 or -90 and get the motor to
+    % go to the correct location.
+    ang = 90; % Put in a value here of the angle that you would like the motor to go to.
+% The code below turns the LED's on each motor on sequentially in .5 second
+% increments.
+    for ID=1:4
+        calllib('dynamixel','dxl_write_byte',ID,25,1) % Turns the LED on for each motor.
+        % Right 1 to the LED memory to turn it on.
+        pause(0.5); % Pauses for .5 seconds in between turning LED's on.
+    end
+    
+    
+% This determines the current position of each of the motors.  We manually moved the motors to get the values commented in below.        
+    for ID=1:4 
+        POS(ID) = calllib('dynamixel','dxl_read_word',ID,36); 
+        % Motor 1   908 - 3192
+        % Motor 2   919 - 3200
+        % Motor 3  1236 - 3343
+        % Motor 4   958 - 3539
+        
+    end
+
+    REF_POS= [2041,1009,3063,2055];    % Reference 0 position wrt initial
+    %motor coordinates
+    POS = mod(POS-REF_POS,4096); % coordinate shift REF_POS to origin
+    degrees = .088*POS; % Shows the degree angle with the position of the motor.
+    radians = (2*pi)*degrees/360; % Shows the radian of the degree position with respect to the motor position.
+    
+    calllib('dynamixel','dxl_write_word',2,32,30);  % Sets the speed of motor 2.
+    calllib('dynamixel','dxl_write_word',2,30,1050); % Sets the motor at a position so it is not rubbing on the mat.
+
+    calllib('dynamixel','dxl_write_word',4,32,30); % Sets the speed of motor 4.
+    calllib('dynamixel','dxl_write_word',4,30,3529); % Sets the motor at a position so it is not rubbing on the mat.
+     
+    calllib('dynamixel','dxl_write_word',3,32,30); % Sets the speed of motor 3.
+    calllib('dynamixel','dxl_write_word',3,30,3098); % Sets the motor at a position so it is not rubbing on the mat.
+        if ang <= 0
+         ang = 360+ang; 
+         ang = ang/.088;
+         
+        else
+         ang = ang/.088;
+        end
+    calllib('dynamixel','dxl_write_word',1,32,30); % Sets the speed of motor 1.
+    calllib('dynamixel','dxl_write_word',1,30,ang); % Moves motor 1 to the position set in the beginning of the program.
+   
+    else
+        disp('Failed to open USB2Dynamixel!'); 
+% display this message when the connection fails
+    end
+    calllib('dynamixel','dxl_terminate');
+    unloadlibrary('dynamixel');
+end
