@@ -1,0 +1,47 @@
+function LabFinal()
+
+% This is the code for Andrew Lemmon and Daniel Ketterer
+
+    % Default setting
+    DEFAULT_PORTNUM		=5; % COM3
+    DEFAULT_BAUDNUM		=1; % 1Mbps
+
+    loadlibrary('dynamixel','dynamixel.h');
+%     libfunctions('dynamixel');
+    
+    res = calllib('dynamixel','dxl_initialize',DEFAULT_PORTNUM,DEFAULT_BAUDNUM);
+    
+
+    if res == 1 
+% successfull connection
+    % At this point we were able to put in 90 or -90 and get the motor to
+    % go to the correct location.
+    ang = [90,92.4,272.624,310.552]; % Put in a value here of the angle that you would like the motor to go to.
+% The code below turns the LED's on each motor on sequentially in .5 second
+% increments.
+    for ID=1:4
+        calllib('dynamixel','dxl_write_byte',ID,25,1) % Turns the LED on for each motor.
+        % Right 1 to the LED memory to turn it on.
+        pause(0.5); % Pauses for .5 seconds in between turning LED's on.
+    end
+    
+    
+% This determines the current position of each of the motors.  We manually moved the motors to get the values commented in below.        
+    GetAngles()
+    for ID=1:4 
+    if ang(ID) <= 0
+         ang(ID) = 360+ang(ID); 
+         ang(ID) = ang(ID)/.088;
+         
+        else
+         ang(ID) = ang(ID)/.088;
+    end
+    end
+    Move()
+    else
+        disp('Failed to open USB2Dynamixel!'); 
+% display this message when the connection fails
+    end
+    calllib('dynamixel','dxl_terminate');
+    unloadlibrary('dynamixel');
+end
